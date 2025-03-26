@@ -1,10 +1,21 @@
 import express from "express";
 import cors from "cors";
 import { obtenerConexionDB } from "./database/connection.js";
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(fileURLToPath(import.meta.url)); 
 
 const app = express();
 app.use(cors()); // Habilita CORS para permitir solicitudes del frontend
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('/Clientes-formulario', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'clientes.html'));
+  });
+
 
 //Obtener clientes
 app.get("/clientes", async (req, res) => {
@@ -35,7 +46,7 @@ app.delete("/clientes/:id", async (req, res) => {
   try {
     const conexion = await obtenerConexionDB();
     const query = await conexion.request()
-      .query(`DELETE FROM clientes WHERE id = ${req.params.id}`);
+      .query(`DELETE FROM clientes WHERE cliente_id = ${req.params.id}`);
   } catch (error) {
     console.error(`Error al eliminar cliente: ${error}`);
   }
