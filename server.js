@@ -36,6 +36,7 @@ app.post("/clientes", async (req, res) => {
     const query = await conexion.request()
       .query(`INSERT INTO clientes (nombre, apellido,email, telefono,direccion) 
             VALUES ('${req.body.nombre}', '${req.body.apellido}', '${req.body.email}', '${req.body.telefono}', '${req.body.direccion}')`);
+            res.status(200).json({ message: 'Cliente agregado correctamente' });
   } catch (error) {
     console.error(`Error al insertar cliente: ${error}`);
   }
@@ -47,6 +48,7 @@ app.delete("/clientes/:id", async (req, res) => {
     const conexion = await obtenerConexionDB();
     const query = await conexion.request()
       .query(`DELETE FROM clientes WHERE cliente_id = ${req.params.id}`);
+      res.status(200).json({ message: 'Cliente eliminado correctamente' });
   } catch (error) {
     console.error(`Error al eliminar cliente: ${error}`);
   }
@@ -57,17 +59,33 @@ app.put("/clientes/:id", async (req, res) => {
   try {
     const conexion = await obtenerConexionDB();
     const query = await conexion.request()
-      .query(`UPDATE clientes SET 
-      nombre = '${req.body.nombre}', 
-      apellido = '${req.body.apellido}', 
-      email = '${req.body.email}', 
-      telefono = '${req.body.telefono}', 
-      direccion = '${req.body.direccion}'
-      WHERE id = ${req.params.id}`);
+      .query(`
+        UPDATE clientes SET 
+          nombre = '${req.body.nombre}', 
+          apellido = '${req.body.apellido}', 
+          email = '${req.body.email}', 
+          telefono = '${req.body.telefono}', 
+          direccion = '${req.body.direccion}'
+        WHERE cliente_id = ${req.params.id}
+      `);
+    res.status(200).json({ message: 'Cliente agregado correctamente' });
   } catch (error) {
     console.error(`Error al actualizar cliente: ${error}`);
+    res.status(500).json({ error: "Error al actualizar el cliente" });
   }
-})
+});
+
+app.get("/clientes/:id", async (req, res) => {
+  try {
+    const conexion = await obtenerConexionDB();
+    const query = await conexion.request()
+      .query(`SELECT * FROM clientes WHERE cliente_id = ${req.params.id}`);
+    res.json(query.recordset[0]);
+  } catch (error) {
+    console.error(`Error al obtener cliente: ${error}`);
+    res.status(500).json({ error: "Error al obtener el cliente" });
+  }
+});
 
 app.get("/reservas", async (req, res) => {
   try {
