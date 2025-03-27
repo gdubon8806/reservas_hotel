@@ -4,11 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Habitaciones</title>
+  <link rel="stylesheet" href="../styles.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -82,7 +79,11 @@
   </style>
 </head>
 <body>
-  <h1>Gestión de Habitaciones</h1>
+  <div class="header-container">
+    <a class="btn-a" href="../index.html">Atrás</a>
+    <h1>Gestión de Habitaciones</h1>
+  </div>
+
   
   <form id="habitacion-form">
     <h2>Agregar Nueva Habitación</h2>
@@ -171,7 +172,7 @@
   <script>
     async function cargarHabitaciones() {
       try {
-        const response = await fetch('/habitaciones');
+        const response = await fetch('http://localhost:3000/habitaciones');
         const habitaciones = await response.json();
         const tbody = document.querySelector('#habitaciones-table tbody');
         tbody.innerHTML = '';
@@ -209,7 +210,7 @@
       };
 
       try {
-        const response = await fetch('/habitaciones', {
+        const response = await fetch('http://localhost:3000/habitaciones', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -232,7 +233,7 @@
 
     async function mostrarModalEditar(id) {
       try {
-        const response = await fetch(`/habitaciones/${id}`);
+        const response = await fetch(`http://localhost:3000/habitaciones/${id}`);
         const habitacion = await response.json();
         
         document.getElementById('editar-id').value = habitacion.habitacion_id;
@@ -266,7 +267,7 @@
       };
 
       try {
-        const response = await fetch(`/habitaciones/${id}`, {
+        const response = await fetch(`http://localhost:3000/habitaciones/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -290,7 +291,7 @@
     async function eliminarHabitacion(id) {
       if (confirm('¿Estás seguro de que deseas eliminar esta habitación?')) {
         try {
-          const response = await fetch(`/habitaciones/${id}`, {
+          const response = await fetch(`http://localhost:3000/habitaciones/${id}`, {
             method: 'DELETE'
           });
 

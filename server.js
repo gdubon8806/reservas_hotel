@@ -176,15 +176,14 @@ app.get("/habitaciones/:id", async (req, res) => {
 app.get("/reservas", async (req, res) => {
   try {
     const pool = await obtenerConexionDB();
-    const result = await pool.request().query("SELECT id, fecha FROM reservas");
+    const result = await pool.request().query(
+      "SELECT c.nombre, c.apellido, h.numero_habitacion, h.piso, r.precio_total, r.estado_reserva, r.fecha_llegada, r.fecha_salida, r.reserva_id FROM Reservas r INNER JOIN Clientes c ON c.cliente_id = r.cliente_id INNER JOIN Habitaciones h ON h.habitacion_id = r.habitacion_id");
     res.json(result.recordset);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al obtener las reservas" });
   }
 });
-
-
 
 
 const PORT = 3000;

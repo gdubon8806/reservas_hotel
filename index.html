@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas Hotel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="header-container">
+        <h1>Panel de Gestión - Hotel</h1>
+        <div class="menu-container">
+            <a class="btn-a" href="public/clientes.html">Clientes</a>
+            <a class="btn-a" href="public/habitaciones.html">Habitaciones</a>
+        </div>
+    </div>
+
+    <h1>Reservas</h1>
+    <div id="reservas-container"></div> <!-- Aquí se agregarán las tarjetas de reservas -->
+
+    <!-- Plantilla para tarjetas de reservas -->
+    <template id="reserva-template">
+        <div class="card">
+            <div class="card-image">
+                <img src="/img/user-icon.webp" alt="Reserva">
+            </div>
+            <div class="card-content">
+                <h3 class="card-titulo"></h3>
+                <p class="card-nombre-cliente"></p>
+                <p class="card-fecha-inicio-reserva"></p>
+                <p class="card-fecha-salida-reserva"></p>
+                <p class="card-num-habitacion"></p>
+                <p class="card-piso"></p>
+                <p class="card-precio_total"></p>
+                <p class="card-estado"></p>
+               
+            </div>
+        </div>
+    </template>
+
+    <script src="index.js" defer></script>
+</body>
+
+</html>
