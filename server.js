@@ -86,7 +86,93 @@ app.get("/clientes/:id", async (req, res) => {
     res.status(500).json({ error: "Error al obtener el cliente" });
   }
 });
+// Inserción de habitaciones
+app.post("/habitaciones", async (req, res) => {
+  const { numero_habitacion, piso, tipo_habitacion, precio_noche, descripcion } = req.body;
 
+  try {
+    const conexion = await obtenerConexionDB();
+    
+    await conexion.request().query(`
+      INSERT INTO Habitaciones (
+        numero_habitacion, 
+        piso, 
+        tipo_habitacion, 
+        precio_noche, 
+        descripcion
+      ) VALUES (
+        '${numero_habitacion}', 
+        '${piso}', 
+        '${tipo_habitacion}', 
+        '${precio_noche}', 
+        '${descripcion}'
+      )
+    `);
+
+    res.status(200).json({ message: 'Habitación registrada correctamente' });
+  } catch (error) {
+    console.error('Error al insertar la habitación:', error);
+    res.status(500).json({ error: 'Hubo un problema al registrar la habitación' });
+  }
+});
+app.delete("/habitaciones/:id", async (req, res) => {
+  try {
+    const conexion = await obtenerConexionDB();
+    await conexion.request()
+      .query(`DELETE FROM Habitaciones WHERE habitacion_id = ${req.params.id}`);
+    res.status(200).json({ success: true, message: 'Habitación eliminada correctamente' });
+  } catch (error) {
+    console.error(`Error al eliminar habitación: ${error}`);
+    res.status(500).json({ success: false, error: "Error al eliminar la habitación" });
+  }
+});
+
+// Ruta para actualizar habitación
+app.put("/habitaciones/:id", async (req, res) => {
+  try {
+    const { numero_habitacion, piso, tipo_habitacion, precio_noche, descripcion } = req.body;
+    const conexion = await obtenerConexionDB();
+    await conexion.request().query(`
+      UPDATE Habitaciones SET 
+        numero_habitacion = '${numero_habitacion}',
+        piso = '${piso}',
+        tipo_habitacion = '${tipo_habitacion}',
+        precio_noche = '${precio_noche}',
+        descripcion = '${descripcion}'
+      WHERE habitacion_id = ${req.params.id}
+    `);
+    res.status(200).json({ success: true, message: 'Habitación actualizada correctamente' });
+  } catch (error) {
+    console.error(`Error al actualizar habitación: ${error}`);
+    res.status(500).json({ success: false, error: "Error al actualizar la habitación" });
+  }
+});
+
+
+// Obtener todas las habitaciones
+app.get("/habitaciones", async (req, res) => {
+  try {
+    const pool = await obtenerConexionDB();
+    const result = await pool.request().query("SELECT * FROM Habitaciones");
+    res.json(result.recordset);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener las habitaciones" });
+  }
+});
+
+// Obtener una habitación específica por ID
+app.get("/habitaciones/:id", async (req, res) => {
+  try {
+    const pool = await obtenerConexionDB();
+    const result = await pool.request()
+      .query(`SELECT * FROM Habitaciones WHERE habitacion_id = ${req.params.id}`);
+    res.json(result.recordset[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener la habitación" });
+  }
+});
 app.get("/reservas", async (req, res) => {
   try {
     const pool = await obtenerConexionDB();
@@ -97,6 +183,9 @@ app.get("/reservas", async (req, res) => {
     res.status(500).json({ error: "Error al obtener las reservas" });
   }
 });
+
+
+
 
 const PORT = 3000;
 app.listen(PORT, () => {

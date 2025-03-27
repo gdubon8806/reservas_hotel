@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Gestión - Hotel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <!-- Encabezado -->
+    <header class="bg-blue-800 text-white p-5 flex justify-between items-center">
+        <h1 class="text-3xl font-bold">Panel de Gestión - Hotel</h1>
+        <nav>
+            <ul class="flex gap-4">
+                <li><a href="clientes.html" class="hover:underline">Registrar Cliente</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Panel de Control -->
+    <section class="py-12 px-6 text-center">
+        <h2 class="text-3xl font-bold mb-6">Gestión de Reservas</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <a href="clientes.html" class="bg-green-600 text-white p-6 rounded-lg shadow-md">Registrar Nuevo Cliente</a>
+            <a href="habitaciones.html" class="bg-blue-600 text-white p-6 rounded-lg shadow-md">Registrar Habitaciones</a>
+        </div>
+    </section>
+
+     <!-- Pie de Página -->
+    <footer class="bg-blue-800 text-white text-center p-6 mt-12">
+        <p>Panel de Gestión - Solo para uso del personal del hotel</p>
+    </footer>
+</body>
+</html>
