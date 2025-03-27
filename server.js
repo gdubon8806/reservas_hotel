@@ -173,6 +173,7 @@ app.get("/habitaciones/:id", async (req, res) => {
     res.status(500).json({ error: "Error al obtener la habitación" });
   }
 });
+
 app.get("/reservas", async (req, res) => {
   try {
     const pool = await obtenerConexionDB();
@@ -185,6 +186,48 @@ app.get("/reservas", async (req, res) => {
   }
 });
 
+app.post("/reservas", async (req, res) => {
+  const { cliente_id, habitacion_id, fecha_inicio, fecha_salida, precio_total, estado, numero_adultos, numero_niños } = req.body;
+
+  console.log(req.body);
+  // Validar los datos recibidos
+  if (!cliente_id || !habitacion_id || !fecha_inicio || !fecha_salida || !precio_total || !estado || !numero_adultos || numero_adultos < 1 || numero_niños < 0) {
+    return res.status(400).json({ error: "Todos los campos son obligatorios y deben ser válidos" });
+  }
+
+  try {
+    const conexion = await obtenerConexionDB();
+
+    // Insertar la reserva en la base de datos
+    await conexion.request().query(`
+      INSERT INTO Reservas (cliente_id, habitacion_id, fecha_llegada, fecha_salida, precio_total, estado_reserva, numero_adultos, numero_niños)
+      VALUES ('${cliente_id}', '${habitacion_id}', '${fecha_inicio}', '${fecha_salida}', '${precio_total}', '${estado}', '${numero_adultos}', '${numero_niños}')
+    `);
+
+    res.status(201).json({ message: "Reserva creada correctamente" });
+  } catch (error) {
+    console.error("Error al insertar la reserva:", error);
+    res.status(500).json({ error: "Hubo un problema al crear la reserva" });
+  }
+});
+
+app.delete("/reservas/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const conexion = await obtenerConexionDB();
+
+        // Eliminar la reserva de la base de datos
+        await conexion.request().query(`
+            DELETE FROM Reservas WHERE reserva_id = ${id}
+        `);
+
+        res.status(200).json({ message: "Reserva eliminada correctamente" });
+    } catch (error) {
+        console.error("Error al eliminar la reserva:", error);
+        res.status(500).json({ error: "Hubo un problema al eliminar la reserva" });
+    }
+});
 
 const PORT = 3000;
 app.listen(PORT, () => {
