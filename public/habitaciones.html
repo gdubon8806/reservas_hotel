@@ -157,6 +157,9 @@
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td colspan="6" style="text-align: center;">No hay habitaciones registradas.</td>
+      </tr>
     </tbody>
   </table>
 
@@ -213,7 +216,19 @@
         const response = await fetch('http://localhost:3000/habitaciones');
         const habitaciones = await response.json();
         const tbody = document.querySelector('#habitaciones-table tbody');
-        tbody.innerHTML = '';
+        tbody.innerHTML = ''; // Limpiar la tabla antes de llenarla
+
+        if (habitaciones.length === 0) {
+          // Mostrar mensaje si no hay habitaciones
+          const row = document.createElement('tr');
+          const cell = document.createElement('td');
+          cell.colSpan = 6; // Asegurarse de que ocupe todas las columnas
+          cell.textContent = 'No hay habitaciones registradas.';
+          cell.style.textAlign = 'center'; // Centrar el texto
+          row.appendChild(cell);
+          tbody.appendChild(row);
+          return;
+        }
 
         habitaciones.forEach(habitacion => {
           const row = document.createElement('tr');
