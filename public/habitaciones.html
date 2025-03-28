@@ -76,6 +76,33 @@
       font-weight: bold;
       cursor: pointer;
     }
+    #modal-reservas {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    #modal-reservas .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 50%;
+    }
+
+    #modal-reservas .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -169,6 +196,17 @@
     </div>
   </div>
 
+  <!-- Modal para mostrar estadísticas de reservas -->
+  <div id="modal-reservas" style="display: none;">
+    <div class="modal-content">
+      <h2>Reservas de la Habitación</h2>
+      <p id="reservas-confirmadas"></p>
+      <p id="reservas-pendientes"></p>
+      <p id="reservas-canceladas"></p>
+      <button id="btn-atras-reservas">Atrás</button> <!-- Botón de "Atrás" -->
+    </div>
+  </div>
+
   <script>
     async function cargarHabitaciones() {
       try {
@@ -190,6 +228,10 @@
               <button class="btn-delete" onclick="eliminarHabitacion(${habitacion.habitacion_id})">Eliminar</button>
             </td>
           `;
+
+          // Agregar evento para mostrar estadísticas de reservas
+          row.addEventListener('click', () => mostrarEstadisticasReservas(habitacion.habitacion_id));
+
           tbody.appendChild(row);
         });
       } catch (error) {
@@ -307,6 +349,35 @@
         }
       }
     }
+
+    async function mostrarEstadisticasReservas(habitacionId) {
+      try {
+        const response = await fetch(`http://localhost:3000/reservas/estadisticas/${habitacionId}`);
+        if (!response.ok) {
+          throw new Error('Error al obtener las estadísticas de reservas');
+        }
+
+        const estadisticas = await response.json();
+
+        // Mostrar las estadísticas en el modal
+        document.getElementById('reservas-confirmadas').textContent = `Confirmadas: ${estadisticas.confirmadas}`;
+        document.getElementById('reservas-pendientes').textContent = `Pendientes: ${estadisticas.pendientes}`;
+        document.getElementById('reservas-canceladas').textContent = `Canceladas: ${estadisticas.canceladas}`;
+
+        // Mostrar el modal
+        document.getElementById('modal-reservas').style.display = 'block';
+      } catch (error) {
+        console.error('Error al obtener las estadísticas de reservas:', error);
+        alert('Error al obtener las estadísticas de reservas');
+      }
+    }
+
+    // Cerrar el modal
+ 
+
+    document.getElementById('btn-atras-reservas').addEventListener('click', () => {
+      document.getElementById('modal-reservas').style.display = 'none';
+    });
 
     document.addEventListener('DOMContentLoaded', cargarHabitaciones);
   </script>

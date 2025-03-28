@@ -86,6 +86,25 @@ app.get("/clientes/:id", async (req, res) => {
     res.status(500).json({ error: "Error al obtener el cliente" });
   }
 });
+
+app.get('/clientes/:id/reservas-confirmadas', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const conexion = await obtenerConexionDB();
+
+    // Ejecutar el procedimiento almacenado
+    const result = await conexion.request()
+      .input('cliente_id', id) // Pasar el parámetro al procedimiento
+      .execute('ObtenerReservasConfirmadasPorCliente'); // Llamar al procedimiento almacenado
+
+    res.json(result.recordset[0]); // Devolver el primer resultado
+  } catch (error) {
+    console.error('Error al obtener las reservas confirmadas del cliente:', error);
+    res.status(500).json({ error: 'Error al obtener las reservas confirmadas del cliente' });
+  }
+});
+
 // Inserción de habitaciones
 app.post("/habitaciones", async (req, res) => {
   const { numero_habitacion, piso, tipo_habitacion, precio_noche, descripcion } = req.body;
@@ -227,6 +246,41 @@ app.delete("/reservas/:id", async (req, res) => {
         console.error("Error al eliminar la reserva:", error);
         res.status(500).json({ error: "Hubo un problema al eliminar la reserva" });
     }
+});
+
+app.get('/reservas/estadisticas/:habitacionId', async (req, res) => {
+  const { habitacionId } = req.params;
+
+  try {
+    const conexion = await obtenerConexionDB();
+
+    // Ejecutar el procedimiento almacenado
+    const result = await conexion.request()
+      .input('habitacion_id', habitacionId) // Pasar el parámetro al procedimiento
+      .execute('ObtenerEstadisticasReservasPorHabitacion'); // Llamar al procedimiento almacenado
+
+    // Formatear los resultados en un objeto más fácil de usar
+    const estadisticas = {
+      confirmadas: 0,
+      pendientes: 0,
+      canceladas: 0
+    };
+
+    result.recordset.forEach(row => {
+      if (row.estado_reserva === 'confirmada') {
+        estadisticas.confirmadas = row.total;
+      } else if (row.estado_reserva === 'pendiente') {
+        estadisticas.pendientes = row.total;
+      } else if (row.estado_reserva === 'cancelada') {
+        estadisticas.canceladas = row.total;
+      }
+    });
+
+    res.json(estadisticas);
+  } catch (error) {
+    console.error('Error al obtener estadísticas de reservas:', error);
+    res.status(500).json({ error: 'Error al obtener estadísticas de reservas' });
+  }
 });
 
 const PORT = 3000;
