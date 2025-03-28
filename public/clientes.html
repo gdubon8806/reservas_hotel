@@ -192,8 +192,8 @@
             <td>${cliente.telefono}</td>
             <td>${cliente.direccion}</td>
             <td>
-              <button onclick="editarCliente(${cliente.cliente_id})">Actualizar</button>
-              <button onclick="eliminarCliente(${cliente.cliente_id})">Eliminar</button>
+              <button class="btn-edit" onclick="editarCliente(${cliente.cliente_id}, event)">Actualizar</button>
+              <button class="btn-delete" onclick="eliminarCliente(${cliente.cliente_id}, event)">Eliminar</button>
             </td>
           `;
 
@@ -208,7 +208,8 @@
     }
 
     //CREO QUE NO SE USAAAAAAAAAAAAAAAAAAAA
-    async function editarCliente(id) {
+    async function editarCliente(id, event) {
+      event.stopPropagation();
       try {
         const response = await fetch(`http://localhost:3000/clientes/${id}`);
         const cliente = await response.json();
@@ -298,7 +299,8 @@
       }
     });
     // Función para eliminar un cliente
-    async function eliminarCliente(id) {
+    async function eliminarCliente(id, event) {
+      event.stopPropagation();
       try {
         const response = await fetch(`http://localhost:3000/clientes/${id}`, {
           method: 'DELETE'
